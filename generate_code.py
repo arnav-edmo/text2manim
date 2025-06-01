@@ -21,6 +21,7 @@ def main(json_file_path: str, output_file_path: str = "generated_scene.py") -> s
     # Start building the Manim code
     code = '''from manim import *
 import numpy as np
+from math import sqrt
 from helper_functions import *
 
 class GeneratedScene(Scene):
