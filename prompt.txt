@@ -1,0 +1,15 @@
+Inscribe a square in a circle of radius 3 cm. Draw two tangents of length 5 cm each from a point P outside the circle.
+
+Make a circle of radius 3 cm. Draw two tangents of length 5 cm each from a point C outside the circle.
+
+Draw a circle of radius 2 cm. Construct a tangent of length 3 cm from a point P outside the circle.
+
+Draw an equilateral triangle with side 4 cm.
+
+Make a square inscribed inside a circle.
+
+Inscribe a square in a circle of radius 3 cm. Draw two tangents of length 5 cm each from a point P outside the circle.
+
+Draw a regular hexagon inscribed in a circle of radius 4 cm.
+
+Draw tangents PA and PB from a point P to a circle with center O and radius 2 cm, such that the tangents are inclined to each other at an angle of 80°.

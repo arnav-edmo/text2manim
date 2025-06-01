@@ -1,0 +1,89 @@
+{
+  "entities": [
+    {
+      "type": "circle",
+      "id": "C1",
+      "color": "GREEN"
+    },
+    {
+      "type": "polygon",
+      "id": "S1",
+      "sides": 4,
+      "color": "BLUE"
+    },
+    {
+      "type": "line",
+      "id": "T1",
+      "color": "RED"
+    },
+    {
+      "type": "line",
+      "id": "T2",
+      "color": "RED"
+    },
+    {
+      "type": "point",
+      "id": "P1",
+      "color": "ORANGE"
+    }
+  ],
+  "relationships": [
+    {
+      "type": "inscribed",
+      "shape": "S1",
+      "in": "C1"
+    },
+    {
+      "type": "tangent",
+      "line": "T1",
+      "to": "C1"
+    },
+    {
+      "type": "tangent",
+      "line": "T2",
+      "to": "C1"
+    },
+    {
+      "type": "passes_through",
+      "line": "T1",
+      "point": "P1"
+    },
+    {
+      "type": "passes_through",
+      "line": "T2",
+      "point": "P1"
+    }
+  ],
+  "positions": {
+    "C1": {
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "radius": 3
+    },
+    "S1": {
+      "vertices": "get_square_vertices([0, 0, 0], 4.243, 0)"
+    },
+    "P1": {
+      "coordinates": [
+        5.83,
+        0,
+        0
+      ]
+    },
+    "T1": {
+      "endpoints": [
+        "get_single_tangent_point([0, 0, 0], 3, [5.83, 0, 0], 'upper')",
+        "[5.83, 0, 0]"
+      ]
+    },
+    "T2": {
+      "endpoints": [
+        "get_single_tangent_point([0, 0, 0], 3, [5.83, 0, 0], 'lower')",
+        "[5.83, 0, 0]"
+      ]
+    }
+  }
+}
