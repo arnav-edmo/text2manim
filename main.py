@@ -103,6 +103,17 @@ def generate_json_schema(description: str, model_name: str = "llama-3.1-8b-insta
     8. get_inscribed_circle(vertices)
     9. get_circumscribed_circle(vertices)
 
+    IMPORTANT: The number of positional arguments for each function is as follows:
+    1. get_single_tangent_point: 4
+    2. get_square_vertices: 3
+    3. get_rectangle_vertices: 4
+    4. get_equilateral_triangle_vertices: 3
+    5. get_isosceles_triangle_vertices: 4
+    6. get_right_triangle_vertices: 4
+    7. get_chord_points: 3
+    8. get_inscribed_circle: 1
+    9. get_circumscribed_circle: 1
+
     """ + few_shot_examples + """
 
     Now, analyze this input and generate a JSON schema for: """ + truncated_description + """

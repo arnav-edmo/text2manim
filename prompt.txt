@@ -1,3 +1,6 @@
+In Fig. 10.63, two tangents $A B$ and $A C$ are drawn to a circle with centre $O$ such that $\angle B A C=120^{\circ}$. Prove that $O A=2 A B$.
+
+
 Inscribe a square in a circle of radius 3 cm. Draw two tangents of length 5 cm each from a point P outside the circle.
 
 Make a circle of radius 3 cm. Draw two tangents of length 5 cm each from a point C outside the circle.

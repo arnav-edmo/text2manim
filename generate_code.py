@@ -38,7 +38,7 @@ class GeneratedScene(Scene):
         
         if entity_type == "circle":
             center = pos["center"] if pos["center"] else [0, 0, 0]
-            radius = pos["radius"]
+            radius = float(pos["radius"]) if isinstance(pos["radius"], str) else pos["radius"]
             code += f"        {entity_id} = Circle(radius={radius}).move_to(np.array([{center[0]}, {center[1]}, 0]))\n"
             code += f"        {entity_id}.set_stroke(color={manim_color})\n"
             code += f"        {entity_id}.set_fill({manim_color}, opacity=0.3)\n"
@@ -116,20 +116,48 @@ class GeneratedScene(Scene):
         
         elif entity_type == "point":
             coords = pos["coordinates"]
-            code += f"        {entity_id} = Dot(point=np.array([{coords[0]}, {coords[1]}, {coords[2]}]), color={manim_color})\n"
+            if isinstance(coords, str):
+                # If it's a function call, evaluate it
+                code += f"        {entity_id}_coords = {coords}\n"
+                code += f"        if {entity_id}_coords is None:\n"
+                code += f"            {entity_id}_coords = [0, 0, 0]  # Default coordinates if function returns None\n"
+                code += f"        {entity_id} = Dot(point=np.array({entity_id}_coords), color={manim_color})\n"
+            else:
+                code += f"        {entity_id} = Dot(point=np.array([{coords[0]}, {coords[1]}, {coords[2]}]), color={manim_color})\n"
             # Add label for point
             code += f"        {entity_id}_label = Text('{entity_id}', font_size=24).next_to({entity_id}, RIGHT)\n"
             entity_objects[entity_id] = {"type": "point", "manim_obj": f"{entity_id}"}
         
         elif entity_type == "line":
             endpoints = pos["endpoints"]
-            start_point = endpoints[0]
-            end_point = endpoints[1]
+            if isinstance(endpoints, str):
+                # If endpoints is a function call string
+                code += f"        {entity_id}_endpoints = {endpoints}\n"
+                code += f"        if {entity_id}_endpoints is None:\n"
+                code += f"            {entity_id}_endpoints = [[0, 0, 0], [1, 0, 0]]  # Default endpoints if function returns None\n"
+                code += f"        {entity_id} = Line(np.array({entity_id}_endpoints[0]), np.array({entity_id}_endpoints[1]))\n"
+            else:
+                # Handle each endpoint which might be a function call or coordinates
+                if isinstance(endpoints[0], str):
+                    code += f"        {entity_id}_start = {endpoints[0]}\n"
+                    code += f"        if {entity_id}_start is None:\n"
+                    code += f"            {entity_id}_start = [0, 0, 0]  # Default start point if function returns None\n"
+                    start_ref = f"{entity_id}_start"
+                else:
+                    start_point = endpoints[0]
+                    start_ref = f"[{start_point[0]}, {start_point[1]}, {start_point[2]}]"
+                
+                if isinstance(endpoints[1], str):
+                    code += f"        {entity_id}_end = {endpoints[1]}\n"
+                    code += f"        if {entity_id}_end is None:\n"
+                    code += f"            {entity_id}_end = [1, 0, 0]  # Default end point if function returns None\n"
+                    end_ref = f"{entity_id}_end"
+                else:
+                    end_point = endpoints[1]
+                    end_ref = f"[{end_point[0]}, {end_point[1]}, {end_point[2]}]"
+                
+                code += f"        {entity_id} = Line(np.array({start_ref}), np.array({end_ref}))\n"
             
-            code += f"        # Create line {entity_id}\n"
-            code += f"        {entity_id}_start = np.array([{start_point[0]}, {start_point[1]}, {start_point[2]}])\n"
-            code += f"        {entity_id}_end = np.array([{end_point[0]}, {end_point[1]}, {end_point[2]}])\n"
-            code += f"        {entity_id} = Line({entity_id}_start, {entity_id}_end)\n"
             code += f"        {entity_id}.set_stroke(color={manim_color})\n"
             entity_objects[entity_id] = {"type": "line", "manim_obj": f"{entity_id}"}
         
