@@ -1,11 +1,11 @@
 import json
 import re
 import os
+from dotenv import load_dotenv
 import requests
 from typing import Dict, Any
 
-# Global cache for storing results
-cache = {}
+load_dotenv()
 
 def get_api_config(model_name: str = "llama-3.1-8b-instant") -> Dict[str, str]:
     """Get API configuration including API key and URL."""
@@ -19,28 +19,93 @@ def get_api_config(model_name: str = "llama-3.1-8b-instant") -> Dict[str, str]:
         "api_url": "https://api.groq.com/openai/v1/chat/completions"
     }
 
+def get_few_shot_examples(description: str) -> str:
+    """Get few shot examples for the description."""
+
+    few_shot_examples = ""
+
+    description = description.lower()
+
+    if "circle" in description:
+        with open('few_shot_examples/circle.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "square" in description:
+        with open('few_shot_examples/square.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "rectangle" in description:
+        with open('few_shot_examples/rectangle.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "triangle" in description:
+        with open('few_shot_examples/triangle.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "tangent" in description:
+        with open('few_shot_examples/tangent.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "inscribe" in description:
+        with open('few_shot_examples/inscribe.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "circumscribe" in description:
+        with open('few_shot_examples/circumscribe.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "chord" in description:
+        with open('few_shot_examples/chord.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    if "semi" in description:
+        with open('few_shot_examples/semicircle.txt', 'r') as f:
+            few_shot_examples += f.read()
+
+    return few_shot_examples
+
 def generate_json_schema(description: str, model_name: str = "llama-3.1-8b-instant") -> Dict[str, Any]:
     """Generate a JSON schema for the geometric description using Chain of Thought."""
     # Get API configuration
     config = get_api_config(model_name)
     
     # Sanitize input
-    sanitized_description = re.sub(r'[{}]', '', description).replace('\n', ' ').strip()
-    
-    # Check cache
-    global cache
-    if sanitized_description in cache:
-        return cache[sanitized_description]
-    
-    with open('json_prompt.txt', 'r') as f:
-        json_prompt = f.read()
+    truncated_description = re.sub(r'[{}]', '', description).replace('\n', ' ').strip()
+
+    few_shot_examples = get_few_shot_examples(description)
 
     prompt = """You are a geometric parser with expert knowledge of geometric principles. Use Chain of Thought to analyze the geometric problem and convert it into a JSON schema.
     Your task is to extract all information about the image from the question. You are NOT required to SOLVE the question.
 
-    """ + json_prompt + """
+    CRITICAL RULES FOR JSON STRUCTURE:
+    1. All numeric values must be plain numbers (e.g., 5 not "5")
+    2. All coordinates must be arrays of numbers (e.g., [0, 0, 0] not "[0, 0, 0]")
+    3. Function calls must be strings (e.g., "get_square_vertices([0, 0, 0], 5, 0)")
+    4. Do not add any explanatory text after the JSON
+    5. The JSON must be valid and complete
+    6. Do NOT use BLACK color for any shape
+    7. For derived calculations:
+        - Square inscribed in circle: side = radius * sqrt(2)
+        - Circle inscribed in square: radius = side / 2
+        - Semicircle on line: center = midpoint of line, radius = line_length / 2
+    8. All entity IDs must be unique
 
-    Now, analyze this input and generate a JSON schema for: """ + sanitized_description + """
+    NEVER put geometric properties (radius, side_length, etc.) only in entities - they MUST be in positions section for manim code generation.
+
+    AVAILABLE GEOMETRIC FUNCTIONS:
+    1. get_single_tangent_point(circle_center, circle_radius, external_point, side)
+    2. get_square_vertices(center, side_length, orientation)
+    3. get_rectangle_vertices(center, length, width, orientation)
+    4. get_equilateral_triangle_vertices(center, side_length, orientation)
+    5. get_isosceles_triangle_vertices(center, equal_sides, base, orientation)
+    6. get_right_triangle_vertices(center, base, height, orientation)
+    7. get_chord_points(circle_center, circle_radius, distance_from_center)
+    8. get_inscribed_circle(vertices)
+    9. get_circumscribed_circle(vertices)
+
+    """ + few_shot_examples + """
+
+    Now, analyze this input and generate a JSON schema for: """ + truncated_description + """
     First provide your Chain of Thought analysis, then output the JSON schema starting with the line "JSON Output:" followed by the JSON on a new line. Do not add any explanatory text after the JSON."""
 
     headers = {
@@ -90,8 +155,6 @@ def generate_json_schema(description: str, model_name: str = "llama-3.1-8b-insta
                 clean_json = json_text[json_start:json_end]
                 json_schema = json.loads(clean_json)
                 
-                # Cache the result
-                cache[sanitized_description] = json_schema
                 return json_schema
             except json.JSONDecodeError as e:
                 print(f"Failed to parse JSON: {json_text}")
@@ -110,7 +173,6 @@ def main():
     print(f"\nProcessing question: {question}")
     try:
         json_schema = generate_json_schema(question)
-        # Write the JSON to a file for code_gen.py to use
         with open('current_scene.json', 'w') as f:
             json.dump(json_schema, f, indent=2)
         print(json.dumps(json_schema, indent=2))

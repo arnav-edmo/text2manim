@@ -1,0 +1,29 @@
+### EXAMPLE 6: Square Inscribed in Circle
+Input query: Make a square inscribed inside a circle.
+
+Chain of Thought:
+1. Circle with radius r (assume 4 cm for visualization)
+2. Square inscribed means vertices touch the circle
+3. Square diagonal = circle diameter = 2r = 8 cm
+4. Square side = diagonal/√2 = 8/√2 ≈ 5.657 cm
+5. Colors: Circle in green, square in blue
+
+JSON Output:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE"},
+    {"type": "polygon", "id": "S1", "sides": 4, "color": "RED"}
+  ],
+  "relationships": [
+    {"type": "inscribed", "shape": "S1", "in": "C1"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 4
+    },
+    "S1": {
+      "vertices": "get_square_vertices([0, 0, 0], 5.657, 0)"
+    }
+  }
+}

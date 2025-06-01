@@ -3,13 +3,13 @@
     {
       "type": "circle",
       "id": "C1",
-      "color": "GREEN"
+      "color": "BLUE"
     },
     {
       "type": "polygon",
       "id": "S1",
       "sides": 4,
-      "color": "BLUE"
+      "color": "GREEN"
     },
     {
       "type": "line",
@@ -24,7 +24,7 @@
     {
       "type": "point",
       "id": "P1",
-      "color": "ORANGE"
+      "color": "WHITE"
     }
   ],
   "relationships": [

@@ -1,0 +1,21 @@
+### EXAMPLE 1: Circle
+Input query: Draw a circle of radius 3 cm.
+
+Chain of Thought:
+1. Simple circle with radius 3 cm
+2. Position at origin for clarity
+3. Use green color (avoiding black)
+4. MUST include both center AND radius in positions section
+
+JSON Output:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3
+    }
+  }
+}

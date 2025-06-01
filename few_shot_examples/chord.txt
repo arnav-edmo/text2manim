@@ -1,0 +1,29 @@
+### EXAMPLE 7: Circle with Chord
+Input query: Draw a circle of radius 4 cm with a chord 6 cm long.
+
+Chain of Thought:
+1. Circle with radius 4 cm at origin
+2. Chord of length 6 cm
+3. Distance from center to chord = √(radius² - (chord/2)²) = √(16 - 9) = √7 ≈ 2.65 cm
+4. Position chord horizontally at distance 2.65 from center
+5. Colors: Circle in green, chord in red
+
+JSON Output:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE"},
+    {"type": "line", "id": "CH1", "color": "RED"}
+  ],
+  "relationships": [
+    {"type": "chord", "line": "CH1", "of": "C1"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 4
+    },
+    "CH1": {
+      "endpoints": "get_chord_points([0, 0, 0], 4, 2.65)"
+    }
+  }
+}

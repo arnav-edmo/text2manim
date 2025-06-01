@@ -1,0 +1,71 @@
+### EXAMPLE 2: Right Triangle
+Input query: Draw a right triangle with base 4 cm and height 3 cm.
+
+Chain of Thought:
+1. Right triangle with base 4 cm and height 3 cm
+2. Right angle at bottom-left corner
+3. Hypotenuse = √(4² + 3²) = 5 cm
+4. Position at origin for clarity
+5. Color: Blue
+
+JSON Output:
+{
+  "entities": [
+    {"type": "polygon", "id": "T1", "sides": 3, "color": "BLUE"}
+  ],
+  "positions": {
+    "T1": {
+      "vertices": "get_right_triangle_vertices([0, 0, 0], 4, 3, 0)"
+    }
+  }
+}
+
+### EXAMPLE 3: Isosceles Triangle
+Input query: Draw an isosceles triangle with equal sides 5 cm and base 3 cm.
+
+Chain of Thought:
+1. Isosceles triangle with two equal sides of 5 cm
+2. Base of 3 cm
+3. Position at origin
+4. Color: Purple
+
+JSON Output:
+{
+  "entities": [
+    {"type": "polygon", "id": "T1", "sides": 3, "color": "PURPLE"}
+  ],
+  "positions": {
+    "T1": {
+      "vertices": "get_isosceles_triangle_vertices([0, 0, 0], 5, 3, 0)"
+    }
+  }
+}
+
+### EXAMPLE 4: Square with Triangle on Top
+Input query: Draw a square of side 3 cm with a triangle on top.
+
+Chain of Thought:
+1. Square with side 3 cm at origin
+2. Equilateral triangle on top side of square
+3. Triangle base = square side = 3 cm
+4. Triangle center positioned above square
+5. Colors: Square in blue, triangle in red
+
+JSON Output:
+{
+  "entities": [
+    {"type": "polygon", "id": "S1", "sides": 4, "color": "BLUE"},
+    {"type": "polygon", "id": "T1", "sides": 3, "color": "RED"}
+  ],
+  "relationships": [
+    {"type": "adjacent", "shape1": "T1", "shape2": "S1", "side": "top"}
+  ],
+  "positions": {
+    "S1": {
+      "vertices": "get_square_vertices([0, 0, 0], 3, 0)"
+    },
+    "T1": {
+      "vertices": "get_equilateral_triangle_vertices([0, 2.6, 0], 3, 0)"
+    }
+  }
+}

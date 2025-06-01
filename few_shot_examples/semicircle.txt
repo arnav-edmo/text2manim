@@ -1,0 +1,49 @@
+
+### COMPLEX EXAMPLE 2: Water Tank with Semicircular Plots
+Input query: A square water tank has its side equal to 40 m. There are four semi-circular grassy plots all round it. Find the cost of surfing the plot at Rs.1.25 per square meter.
+
+Chain of Thought:
+1. Square tank with side 40 m at origin. We will take this as 3 units so that it fits within manim canvas
+2. Four semicircles, one on each side of the square
+3. Each semicircle has diameter = square side = 3
+4. Each semicircle radius = 1.5
+5. Centers of semicircles at midpoints of square sides
+6. Colors: Square tank in blue, semicircles in gray
+
+JSON Output:
+{
+  "entities": [
+    {"type": "polygon", "id": "S1", "sides": 3, "color": "BLUE"},
+    {"type": "semicircle", "id": "SC1", "color": "GRAY", "orientation": "down"},
+    {"type": "semicircle", "id": "SC2", "color": "GRAY", "orientation": "right"},
+    {"type": "semicircle", "id": "SC3", "color": "GRAY", "orientation": "up"},
+    {"type": "semicircle", "id": "SC4", "color": "GRAY", "orientation": "left"}
+  ],
+  "relationships": [
+    {"type": "attached", "shape": "SC1", "to": "S1", "side": "bottom"},
+    {"type": "attached", "shape": "SC2", "to": "S1", "side": "right"},
+    {"type": "attached", "shape": "SC3", "to": "S1", "side": "top"},
+    {"type": "attached", "shape": "SC4", "to": "S1", "side": "left"}
+  ],
+  "positions": {
+    "S1": {
+      "vertices": "get_square_vertices([0, 0, 0], 3, 0)"
+    },
+    "SC1": {
+      "center": [0, -1.5, 0],
+      "radius": 1.5
+    },
+    "SC2": {
+      "center": [1.5, 0, 0],
+      "radius": 1.5
+    },
+    "SC3": {
+      "center": [0, 1.5, 0],
+      "radius": 1.5
+    },
+    "SC4": {
+      "center": [-1.5, 0, 0],
+      "radius": 1.5
+    }
+  }
+}

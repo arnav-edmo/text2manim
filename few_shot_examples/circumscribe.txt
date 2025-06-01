@@ -1,0 +1,28 @@
+### EXAMPLE 8: Equilateral Triangle with Circumscribed Circle
+Input query: Draw an equilateral triangle with side 6 cm and its circumscribed circle.
+
+Chain of Thought:
+1. Equilateral triangle with side 6 cm
+2. Circumscribed circle passes through all vertices
+3. Circumradius = side/(√3) = 6/√3 ≈ 3.464 cm
+4. Colors: Triangle in red, circle in green
+
+JSON Output:
+{
+  "entities": [
+    {"type": "polygon", "id": "T1", "sides": 3, "color": "RED"},
+    {"type": "circle", "id": "C1", "color": "BLUE"}
+  ],
+  "relationships": [
+    {"type": "circumscribed", "circle": "C1", "around": "T1"}
+  ],
+  "positions": {
+    "T1": {
+      "vertices": "get_equilateral_triangle_vertices([0, 0, 0], 6, 0)"
+    },
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3.464
+    }
+  }
+}
