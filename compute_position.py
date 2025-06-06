@@ -111,13 +111,15 @@ def evaluate_value(value: Any) -> Any:
     # Then try to evaluate as function call
     if any(fname in value for fname in [
         "get_single_tangent_point",
-        "get_chord_points",
         "get_square_vertices",
         "get_rectangle_vertices",
         "get_equilateral_triangle_vertices",
         "get_right_triangle_vertices",
         "get_isosceles_triangle_vertices",
         "get_scalene_triangle_vertices",
+        "get_common_chord",
+        "get_chord_from_center_distance",
+        "get_chord_from_length",
     ]):
         result = evaluate_function_call(value)
         if result is not None:

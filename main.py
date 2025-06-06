@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 load_dotenv()
 
-def get_api_config(model_name: str = "llama-3.1-8b-instant") -> Dict[str, str]:
+def get_api_config(model_name: str = "qwen-qwq-32b") -> Dict[str, str]:
     """Get API configuration including API key and URL."""
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
@@ -99,9 +99,11 @@ def generate_json_schema(description: str, model_name: str = "llama-3.1-8b-insta
     4. get_equilateral_triangle_vertices(center, side_length, orientation)
     5. get_isosceles_triangle_vertices(center, equal_sides, base, orientation)
     6. get_right_triangle_vertices(center, base, height, orientation)
-    7. get_chord_points(circle_center, circle_radius, distance_from_center)
-    8. get_inscribed_circle(vertices)
-    9. get_circumscribed_circle(vertices)
+    7. get_inscribed_circle(vertices)
+    8. get_circumscribed_circle(vertices)
+    9. get_common_chord(circle1_center, circle1_radius, circle2_center, circle2_radius)
+    10. get_chord_from_center_distance(circle_center, circle_radius, distance_from_center)
+    11. get_chord_from_length(circle_center, circle_radius, chord_length)
 
     IMPORTANT: The number of positional arguments for each function is as follows:
     1. get_single_tangent_point: 4
@@ -110,9 +112,11 @@ def generate_json_schema(description: str, model_name: str = "llama-3.1-8b-insta
     4. get_equilateral_triangle_vertices: 3
     5. get_isosceles_triangle_vertices: 4
     6. get_right_triangle_vertices: 4
-    7. get_chord_points: 3
-    8. get_inscribed_circle: 1
-    9. get_circumscribed_circle: 1
+    7. get_inscribed_circle: 1
+    8. get_circumscribed_circle: 1
+    9. get_common_chord: 4
+    10. get_chord_from_center_distance: 3
+    11. get_chord_from_length: 3
 
     """ + few_shot_examples + """
 

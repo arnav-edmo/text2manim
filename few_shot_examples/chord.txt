@@ -1,29 +1,157 @@
-### EXAMPLE 7: Circle with Chord
+# How to access Chord Functions:
+
+1. get_chord_from_length(circle_center, circle_radius, chord_length)
+   - Use when you know the length of the chord
+   - Parameters:
+     * circle_center: [x, y, z] coordinates
+     * circle_radius: radius of circle
+     * chord_length: length of the chord
+   - Returns: Two endpoints of the chord
+   - Example: get_chord_from_length([0, 0, 0], 3.5, 5.25)
+
+2. get_chord_from_center_distance(circle_center, circle_radius, distance)
+   - Use when you know perpendicular distance from center to chord
+   - Parameters:
+     * circle_center: [x, y, z] coordinates
+     * circle_radius: radius of circle
+     * distance: perpendicular distance from center to chord
+   - Returns: Two endpoints of the chord
+   - Example: get_chord_from_center_distance([0, 0, 0], 3.5, 1.5)
+
+3. get_common_chord(circle1_center, circle1_radius, circle2_center, circle2_radius)
+   - Use when finding intersection points of two circles
+   - Parameters:
+     * circle1_center: [x, y, z] coordinates of first circle
+     * circle1_radius: radius of first circle
+     * circle2_center: [x, y, z] coordinates of second circle
+     * circle2_radius: radius of second circle
+   - Returns: Two endpoints of common chord
+   - Example: get_common_chord([0, 0, 0], 3.5, [4, 0, 0], 2.1)
+
+# Scaling Note:
+- All figures must fit within 12x7 rectangle
+- Maximum circle radius allowed: 3.5
+- Scale down proportionally to maintain relative sizes
+- Example: If original radii are 10 and 4:
+  * Scale factor = 3.5/10 = 0.35
+  * New radii = 3.5 and 1.4
+
+
+### EXAMPLE 1: Circle with Chord
 Input query: Draw a circle of radius 4 cm with a chord 6 cm long.
 
 Chain of Thought:
-1. Circle with radius 4 cm at origin
-2. Chord of length 6 cm
-3. Distance from center to chord = √(radius² - (chord/2)²) = √(16 - 9) = √7 ≈ 2.65 cm
-4. Position chord horizontally at distance 2.65 from center
-5. Colors: Circle in green, chord in red
+1. Original circle radius = 4 cm
+2. Scale factor = 3.5/4 = 0.875 (to fit within max radius 3.5)
+3. New circle radius = 4 * 0.875 = 3.5 cm
+4. Original chord length = 6 cm
+5. New chord length = 6 * 0.875 = 5.25 cm
 
 JSON Output:
 {
   "entities": [
-    {"type": "circle", "id": "C1", "color": "BLUE"},
-    {"type": "line", "id": "CH1", "color": "RED"}
+    {"type": "circle", "id": "C1", "color": "BLUE", "radius": 3.5},
+    {"type": "line", "id": "CH1", "color": "RED"},
+    {"type": "point", "id": "A", "color": "WHITE"},
+    {"type": "point", "id": "B", "color": "WHITE"}
   ],
   "relationships": [
-    {"type": "chord", "line": "CH1", "of": "C1"}
+    {"type": "chord", "line": "CH1", "of": "C1"},
+    {"type": "endpoints", "line": "CH1", "points": ["A", "B"]}
   ],
   "positions": {
     "C1": {
       "center": [0, 0, 0],
-      "radius": 4
+      "radius": 3.5
     },
     "CH1": {
-      "endpoints": "get_chord_points([0, 0, 0], 4, 2.65)"
+      "endpoints": "get_chord_from_length([0, 0, 0], 3.5, 5.25)"
+    }
+  }
+}
+
+# EXAMPLE 2: Two circles of radii 5 cm and 3 cm intersect at points A and B. The distance between their centers is 6 cm. Find the length of the common chord AB.
+
+Chain of Thought:
+1. Original dimensions:
+   - Circle 1: radius (R1) = 5 cm
+   - Circle 2: radius (R2) = 3 cm
+   - Distance between centers = 6 cm
+2. Scale factor = 3.5/5 = 0.7 (based on larger circle)
+3. New dimensions:
+   - Circle 1: radius = 3.5 cm
+   - Circle 2: radius = 2.1 cm
+   - Distance between centers = 4.2 cm
+4. Position circles:
+   - Circle 1 at (-2.1, 0, 0)
+   - Circle 2 at (2.1, 0, 0)
+5. Common chord will be calculated using get_common_chord function
+
+JSON:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE", "radius": 3.5},
+    {"type": "circle", "id": "C2", "color": "GREEN", "radius": 2.1},
+    {"type": "line", "id": "AB", "color": "RED"},
+    {"type": "point", "id": "O1", "color": "WHITE"},
+    {"type": "point", "id": "O2", "color": "WHITE"},
+    {"type": "point", "id": "A", "color": "YELLOW"},
+    {"type": "point", "id": "B", "color": "YELLOW"}
+  ],
+  "relationships": [
+    {"type": "intersect", "circle1": "C1", "circle2": "C2", "points": ["A", "B"]},
+    {"type": "centers_line", "points": ["O1", "O2"]},
+    {"type": "common_chord", "line": "AB", "circles": ["C1", "C2"]}
+  ],
+  "positions": {
+    "C1": {
+      "center": [-2.1, 0, 0],
+      "radius": 3.5
+    },
+    "C2": {
+      "center": [2.1, 0, 0],
+      "radius": 2.1
+    },
+    "AB": {
+      "endpoints": "get_common_chord([-2.1, 0, 0], 3.5, [2.1, 0, 0], 2.1)"
+    }
+  }
+}
+
+# EXAMPLE 3: In a circle with radius r = 7 cm, a chord AB is drawn such that the perpendicular distance from the center of the circle to the chord AB is 3 cm. Find the length of the chord AB.
+
+Chain of Thought:
+1. Original dimensions:
+   - Radius (r) = 7 cm
+   - Distance from center to chord (d) = 3 cm
+2. Scale factor = 3.5/7 = 0.5
+3. New dimensions:
+   - Radius = 3.5 cm
+   - Distance from center to chord = 1.5 cm
+
+JSON:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE", "radius": 3.5},
+    {"type": "line", "id": "AB", "color": "RED"},
+    {"type": "line", "id": "OH", "color": "GREEN", "style": "dashed"},
+    {"type": "point", "id": "O", "color": "WHITE"},
+    {"type": "point", "id": "H", "color": "YELLOW"},
+    {"type": "point", "id": "A", "color": "WHITE"},
+    {"type": "point", "id": "B", "color": "WHITE"}
+  ],
+  "relationships": [
+    {"type": "chord", "line": "AB", "of": "C1"},
+    {"type": "perpendicular", "line1": "OH", "line2": "AB"},
+    {"type": "distance", "point1": "O", "point2": "H", "length": 1.5}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3.5
+    },
+    "AB": {
+      "endpoints": "get_chord_from_center_distance([0, 0, 0], 3.5, 1.5)"
     }
   }
 }

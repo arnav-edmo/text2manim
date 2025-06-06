@@ -1,0 +1,149 @@
+# How to make concentric Circles:
+1. Properties:
+   - All circles share the same center point
+   - Different radii for each circle
+   - Maintain proportional scaling (max radius 3.5)
+
+2. Common Relationships:
+   - Chords of larger circle tangent to smaller circle
+   - Common chord between circles (intersecting circles)
+   - Area between circles (annulus)
+   - Distance between points on different circles
+
+3. Visualization Guidelines:
+   - Use distinct colors for each circle
+   - Larger circles should use cooler colors (BLUE, TEAL)
+   - Smaller circles should use warmer colors (RED, ORANGE)
+   - Lines/chords in contrasting colors
+   - Points in WHITE or YELLOW for visibility
+
+# How to access Chord Function:
+- Function: get_chord_points(circle_center, circle_radius, distance_from_center)
+- Parameters:
+  * circle_center: List[float] - Center coordinates [x, y, z]
+  * circle_radius: float - Radius of the circle
+  * distance_from_center: float - Distance of chord from circle center
+- Returns: Tuple of two points [x, y, z] representing chord endpoints
+- Note: Returns None if distance_from_center ≥ circle_radius
+- Example: get_chord_points([0, 0, 0], 3.5, 1.4)
+
+# Scaling Note:
+- All figures must fit within 12x7 rectangle
+- Maximum circle radius allowed: 3.5
+- Scale down proportionally to maintain relative sizes
+- Example: If original radii are 10 and 4:
+  * Scale factor = 3.5/10 = 0.35
+  * New radii = 3.5 and 1.4
+
+
+## EXAMPLE 1: Two concentric circles have radii $4$ cm and $10$ cm. A chord of the larger circle is tangent to the smaller circle. 
+What is the length of this chord?
+
+Chain of Thought:
+2 circles: r1 = 4, r2 = 10
+chord of larger is tangent to smaller.
+this means that distance of chord from center is r1
+
+JSON:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE", "radius": 3.5},
+    {"type": "circle", "id": "C2", "color": "GREEN", "radius": 1.4},
+    {"type": "line", "id": "L1", "color": "RED"}
+  ],
+  "relationships": [
+    {"type": "concentric", "circle1": "C1", "circle2": "C2"},
+    {"type": "chord", "line": "L1", "of": "C1"},
+    {"type": "tangent", "line": "L1", "to": "C2"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3.5
+    },
+    "C2": {
+      "center": [0, 0, 0],
+      "radius": 1.4
+    },
+    "L1": {
+      "endpoints": "get_chord_points([0, 0, 0], 3.5, 1.4)"
+    }
+  }
+}
+
+## EXAMPLE 2: Two concentric circles are of diameters 30 cm and 18 cm . Find the length of the chord of the larger circle which touches the smaller circle.
+
+Chain of Thought:
+1. Convert diameters to radii: 
+   - Larger circle: r2 = 30/2 = 15 cm
+   - Smaller circle: r1 = 18/2 = 9 cm
+2. The chord of larger circle is tangent to smaller circle
+3. Distance of chord from center = radius of smaller circle (9 cm)
+4. Use this to find chord length using the chord formula
+
+JSON:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE", "radius": 3.5},
+    {"type": "circle", "id": "C2", "color": "GREEN", "radius": 2.1},
+    {"type": "line", "id": "L1", "color": "RED"}
+  ],
+  "relationships": [
+    {"type": "concentric", "circle1": "C1", "circle2": "C2"},
+    {"type": "chord", "line": "L1", "of": "C1"},
+    {"type": "tangent", "line": "L1", "to": "C2"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3.5
+    },
+    "C2": {
+      "center": [0, 0, 0],
+      "radius": 2.1
+    },
+    "L1": {
+      "endpoints": "get_chord_points([0, 0, 0], 3.5, 2.1)"
+    }
+  }
+}
+
+## EXAMPLE 3: Three concentric circles have radii in arithmetic progression with smallest radius 1 cm and common difference 0.8 cm. Find the area between the smallest and largest circles.
+
+Chain of Thought:
+1. Arithmetic progression: r1 = 1, d = 0.8
+   - r1 = 1.0 cm
+   - r2 = 1.8 cm
+   - r3 = 2.6 cm
+2. Area between circles = π(R² - r²)
+   where R = largest radius, r = smallest radius
+3. No scaling needed as largest radius < 3.5
+
+JSON:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE", "radius": 2.6},
+    {"type": "circle", "id": "C2", "color": "GREEN", "radius": 1.8},
+    {"type": "circle", "id": "C3", "color": "RED", "radius": 1.0},
+    {"type": "region", "id": "R1", "color": "YELLOW_A", "opacity": 0.3}
+  ],
+  "relationships": [
+    {"type": "concentric", "circle1": "C1", "circle2": "C2"},
+    {"type": "concentric", "circle2": "C2", "circle3": "C3"},
+    {"type": "area_between", "outer": "C1", "inner": "C3", "region": "R1"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 2.6
+    },
+    "C2": {
+      "center": [0, 0, 0],
+      "radius": 1.8
+    },
+    "C3": {
+      "center": [0, 0, 0],
+      "radius": 1.0
+    }
+  }
+}

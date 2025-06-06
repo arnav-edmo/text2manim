@@ -20,7 +20,7 @@ def get_single_tangent_point(circle_center, circle_radius, external_point, side=
     T = np.array([T_xy[0], T_xy[1], O[2]])
     return T
 
-def get_chord_points(circle_center: List[float], circle_radius: float, distance_from_center: float) -> Tuple[List[float], List[float]]:
+def get_chord_from_center_distance(circle_center: List[float], circle_radius: float, distance_from_center: float) -> Tuple[List[float], List[float]]:
     """Calculate endpoints of a chord given its distance from center."""
     if abs(distance_from_center) >= circle_radius:
         return None
@@ -40,6 +40,62 @@ def get_chord_points(circle_center: List[float], circle_radius: float, distance_
         ])
     
     return points[0], points[1]
+
+def get_chord_from_length(circle_center: List[float], circle_radius: float, chord_length: float) -> Tuple[List[float], List[float]]:
+    """Calculate endpoints of a chord given its length."""
+    if chord_length > 2 * circle_radius:
+        return None
+    
+    half_length = chord_length / 2
+    distance_from_center = np.sqrt(circle_radius**2 - half_length**2)
+    return get_chord_from_center_distance(circle_center, circle_radius, distance_from_center)
+
+def get_common_chord(circle1_center: List[float], circle1_radius: float, circle2_center: List[float], circle2_radius: float) -> Tuple[List[float], List[float]]:
+    """Calculate endpoints of the common chord between two intersecting circles.
+    
+    Args:
+        circle1_center: [x, y, z] coordinates of first circle
+        circle1_radius: radius of first circle
+        circle2_center: [x, y, z] coordinates of second circle
+        circle2_radius: radius of second circle
+    
+    Returns:
+        Tuple of two points representing the endpoints of common chord, or None if circles don't intersect
+    """
+    # Convert centers to numpy arrays for easier calculation
+    O1 = np.array(circle1_center)
+    O2 = np.array(circle2_center)
+    
+    # Calculate distance between centers
+    d = np.linalg.norm(O2[:2] - O1[:2])  # Only use x,y coordinates
+    
+    # Check if circles intersect
+    if d > circle1_radius + circle2_radius:  # Too far apart
+        return None
+    if d < abs(circle1_radius - circle2_radius):  # One inside other
+        return None
+    
+    # Calculate distance from center1 to radical axis
+    # Using the radical axis theorem
+    a = (circle1_radius**2 - circle2_radius**2 + d**2)/(2*d)
+    
+    # Calculate height of chord using Pythagorean theorem
+    h = np.sqrt(circle1_radius**2 - a**2)
+    
+    # Calculate unit vector from O1 to O2
+    unit_d = (O2[:2] - O1[:2])/d
+    
+    # Calculate perpendicular unit vector
+    unit_perp = np.array([-unit_d[1], unit_d[0]])
+    
+    # Calculate center point of common chord
+    chord_center = O1[:2] + a*unit_d
+    
+    # Calculate endpoints
+    endpoint1 = np.append(chord_center + h*unit_perp, O1[2] if len(O1) > 2 else 0)
+    endpoint2 = np.append(chord_center - h*unit_perp, O1[2] if len(O1) > 2 else 0)
+    
+    return list(endpoint1), list(endpoint2)
 
 def get_inscribed_circle(vertices: List[List[float]]) -> Tuple[List[float], float]:
     """Calculate center and radius of inscribed circle in a triangle."""
