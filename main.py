@@ -62,6 +62,10 @@ def get_few_shot_examples(description: str) -> str:
         with open('few_shot_examples/semicircle.txt', 'r') as f:
             few_shot_examples += f.read()
 
+    if "concentric" in description:
+        with open('few_shot_examples/concentric.txt', 'r') as f:
+            few_shot_examples += f.read()
+
     return few_shot_examples
 
 def generate_json_schema(description: str, model_name: str = "llama-3.1-8b-instant") -> Dict[str, Any]:
