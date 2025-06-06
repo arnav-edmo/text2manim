@@ -1,14 +1,66 @@
-### EXAMPLE 5: Circle with Tangents from External Point
+# How to call tangent functions
+
+1. get_tangent_by_point(circle_center, circle_radius, external_point)
+   - Use when you have a point outside the circle to draw tangents from
+   - Parameters:
+     * circle_center: [x, y, z] coordinates
+     * circle_radius: radius of circle
+     * external_point: [x, y, z] coordinates of point outside circle
+   - Returns: Two pairs of points [[T1, P], [T2, P]] where T1,T2 are tangent points
+   - Example: get_tangent_by_point([0, 0, 0], 3, [5, 0, 0])
+
+2. get_tangent_by_angle_between_tangents(circle_center, circle_radius, angle)
+   - Use when you want tangents forming a specific angle
+   - Parameters:
+     * circle_center: [x, y, z] coordinates
+     * circle_radius: radius of circle
+     * angle: angle between tangents in radians
+   - Returns: Two pairs of points forming the tangent lines
+   - Example: get_tangent_by_angle_between_tangents([0, 0, 0], 3, 1.0472) # 60° angle
+
+3. get_tangent_by_angle_with_radius(circle_center, circle_radius, angle)
+   - Use when you want a tangent at a specific point on the circle
+   - Parameters:
+     * circle_center: [x, y, z] coordinates
+     * circle_radius: radius of circle
+     * angle: angle from positive x-axis in radians
+   - Returns: One pair of points [T, E] where T is tangent point, E is point on line
+   - Example: get_tangent_by_angle_with_radius([0, 0, 0], 3, 0.7854) # 45° angle
+
+4. get_tangent_by_distance_from_center(circle_center, circle_radius, distance)
+   - Use when you want parallel tangents at a specific distance from center
+   - Parameters:
+     * circle_center: [x, y, z] coordinates
+     * circle_radius: radius of circle
+     * distance: perpendicular distance from center to tangent line
+   - Returns: Two pairs of points [[T1, E1], [T2, E2]] forming parallel tangents
+   - Example: get_tangent_by_distance_from_center([0, 0, 0], 3, 2)
+
+5. get_tangent_by_length_of_tangent(circle_center, circle_radius, length_of_tangent)
+   - Use when you know the exact length of the tangent line from external point to circle
+   - Parameters:
+     * circle_center: [x, y, z] coordinates
+     * circle_radius: radius of circle
+     * length_of_tangent: length of the tangent line from external point to tangent point
+   - Returns: Two pairs of points [[T1, P], [T2, P]] where T1,T2 are tangent points, P is external point
+   - Example: get_tangent_by_length_of_tangent([0, 0, 0], 3, 5) # 5-unit long tangents
+
+## Important Notes:
+1. All functions return pairs of points that define the tangent lines
+2. Points are in [x, y, z] format (z = 0 if not specified)
+3. All measurements should be scaled to fit within the 12x7 rectangle
+4. Maximum circle radius allowed is 3.5 units
+
+
+### EXAMPLE 1: Circle with Tangents from External Point
 Input query: Make a circle of radius 3 cm. Make two tangents of length 5 cm each from point P to the circle.
 
 Chain of Thought:
 1. Circle with radius 3 cm at origin
-2. External point P from which tangents are drawn
-3. Tangent length = 5 cm
-4. Distance from P to center = √(tangent² + radius²) = √(25 + 9) = √34 ≈ 5.83 cm
-5. Position P at [5.83, 0, 0] for simplicity
-6. Two tangent points on circle
-7. Colors: Circle in green, tangents in blue, point P in red
+2. We know tangent length = 5 cm
+3. This is a perfect case for get_tangent_by_length_of_tangent
+4. The function will automatically calculate the external point P and tangent points
+5. Colors: Circle in green, tangents in blue, point P in red
 
 JSON Output:
 {
@@ -29,30 +81,133 @@ JSON Output:
       "center": [0, 0, 0],
       "radius": 3
     },
-    "P1": {
-      "coordinates": [5.83, 0, 0]
-    },
     "T1": {
-      "endpoints": ["get_single_tangent_point([0, 0, 0], 3, [5.83, 0, 0], 'upper')", "[5.83, 0, 0]"]
+      "endpoints": "get_tangent_by_length_of_tangent([0, 0, 0], 3, 5)[0]"
     },
     "T2": {
-      "endpoints": ["get_single_tangent_point([0, 0, 0], 3, [5.83, 0, 0], 'lower')", "[5.83, 0, 0]"]
+      "endpoints": "get_tangent_by_length_of_tangent([0, 0, 0], 3, 5)[1]"
+    },
+    "P1": {
+      "coordinates": "get_tangent_by_length_of_tangent([0, 0, 0], 3, 5)[0][1]"
     }
   }
 }
 
+### EXAMPLE 2: Angle between tangents given 
+Two tangents PA and PB are drawn from an external point P to a circle with center O. If the tangents PA and PB are inclined to each other at an angle of 100°, what is the measure of ∠AOB?
 
-### COMPLEX EXAMPLE 1: Square in Circle with External Tangents
+Chain of Thought:
+1. We have angle between tangents = 100° = 1.745 radians
+2. Perfect case for get_tangent_by_angle_between_tangents
+3. The angle AOB will be twice the angle between radius and tangent
+4. Answer: ∠AOB = 160° (supplement of twice the angle between tangents)
+
+JSON Output:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE"},
+    {"type": "line", "id": "T1", "color": "RED"},
+    {"type": "line", "id": "T2", "color": "RED"},
+    {"type": "point", "id": "P1", "color": "WHITE"},
+    {"type": "line", "id": "OA", "color": "GREEN"},
+    {"type": "line", "id": "OB", "color": "GREEN"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3
+    },
+    "T1": {
+      "endpoints": "get_tangent_by_angle_between_tangents([0, 0, 0], 3, 1.745)[0]"
+    },
+    "T2": {
+      "endpoints": "get_tangent_by_angle_between_tangents([0, 0, 0], 3, 1.745)[1]"
+    },
+    "P1": {
+      "coordinates": "get_tangent_by_angle_between_tangents([0, 0, 0], 3, 1.745)[0][1]"
+    },
+    "OA": {
+      "endpoints": "[[0, 0, 0], get_tangent_by_angle_between_tangents([0, 0, 0], 3, 1.745)[0][0]]"
+    },
+    "OB": {
+      "endpoints": "[[0, 0, 0], get_tangent_by_angle_between_tangents([0, 0, 0], 3, 1.745)[1][0]]"
+    }
+  }
+}
+
+### EXAMPLE 3: Angle between tangent and radius
+In a circle with center O, a tangent line is drawn from point P to the circle at point T. If ∠POT = 45°, then ∠OPT = 45°
+
+Chain of Thought:
+1. We have angle with radius = 45° = 0.785 radians
+2. Perfect case for get_tangent_by_angle_with_radius
+3. The angle between radius and tangent is always 90°
+4. Therefore ∠OPT = 45° (complementary angle)
+
+JSON Output:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE"},
+    {"type": "line", "id": "T1", "color": "RED"},
+    {"type": "point", "id": "P1", "color": "WHITE"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3
+    },
+    "T1": {
+      "endpoints": "get_tangent_by_angle_with_radius([0, 0, 0], 3, 0.785)"
+    },
+    "P1": {
+      "coordinates": "get_tangent_by_angle_with_radius([0, 0, 0], 3, 0.785)[1]"
+    }
+  }
+}
+
+### EXAMPLE 4: Distance between center and tangent point given
+A point P is 10 cm away from the center of a circle with radius 6 cm. Find the length of the tangent from point P to the circle.
+
+Chain of Thought:
+1. Original values: distance = 10 cm, radius = 6 cm
+2. Scale factor = 3.5/6 ≈ 0.583 (to get max radius of 3.5)
+3. Scaled values: distance = 5.83 units, radius = 3.5 units
+4. Perfect case for get_tangent_by_distance_from_center
+
+JSON Output:
+{
+  "entities": [
+    {"type": "circle", "id": "C1", "color": "BLUE"},
+    {"type": "line", "id": "T1", "color": "RED"},
+    {"type": "line", "id": "T2", "color": "RED"},
+    {"type": "point", "id": "P1", "color": "WHITE"}
+  ],
+  "positions": {
+    "C1": {
+      "center": [0, 0, 0],
+      "radius": 3.5
+    },
+    "T1": {
+      "endpoints": "get_tangent_by_distance_from_center([0, 0, 0], 3.5, 5.83)[0]"
+    },
+    "T2": {
+      "endpoints": "get_tangent_by_distance_from_center([0, 0, 0], 3.5, 5.83)[1]"
+    },
+    "P1": {
+      "coordinates": "get_tangent_by_distance_from_center([0, 0, 0], 3.5, 5.83)[0][1]"
+    }
+  }
+}
+
+### EXAMPLE 5: Square in Circle with External Tangents
 Input query: Inscribe a square in a circle of radius 3 cm. Draw two tangents of length 5 cm each from a point P outside the circle.
 
 Chain of Thought:
 1. Circle with radius 3 cm at origin
 2. Square inscribed: side = 3√2 ≈ 4.243 cm
-3. External point P for tangents of length 5 cm
-4. Distance from P to center = √(5² + 3²) = √34 ≈ 5.83 cm
-5. Position P at [5.83, 0, 0]
-6. Two tangent lines from P to circle
-7. Colors: Circle in blue, square in green, tangents in red, point P in white
+3. We know tangent length = 5 cm
+4. Perfect case for get_tangent_by_length_of_tangent
+5. Colors: Circle in blue, square in green, tangents in red, point P in white
 
 JSON Output:
 {
@@ -66,9 +221,7 @@ JSON Output:
   "relationships": [
     {"type": "inscribed", "shape": "S1", "in": "C1"},
     {"type": "tangent", "line": "T1", "to": "C1"},
-    {"type": "tangent", "line": "T2", "to": "C1"},
-    {"type": "passes_through", "line": "T1", "point": "P1"},
-    {"type": "passes_through", "line": "T2", "point": "P1"}
+    {"type": "tangent", "line": "T2", "to": "C1"}
   ],
   "positions": {
     "C1": {
@@ -78,14 +231,14 @@ JSON Output:
     "S1": {
       "vertices": "get_square_vertices([0, 0, 0], 4.243, 0)"
     },
-    "P1": {
-      "coordinates": [5.83, 0, 0]
-    },
     "T1": {
-      "endpoints": ["get_single_tangent_point([0, 0, 0], 3, [5.83, 0, 0], 'upper')", "[5.83, 0, 0]"]
+      "endpoints": "get_tangent_by_length_of_tangent([0, 0, 0], 3, 5)[0]"
     },
     "T2": {
-      "endpoints": ["get_single_tangent_point([0, 0, 0], 3, [5.83, 0, 0], 'lower')", "[5.83, 0, 0]"]
+      "endpoints": "get_tangent_by_length_of_tangent([0, 0, 0], 3, 5)[1]"
+    },
+    "P1": {
+      "coordinates": "get_tangent_by_length_of_tangent([0, 0, 0], 3, 5)[0][1]"
     }
   }
 }

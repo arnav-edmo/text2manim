@@ -2,23 +2,96 @@ from manim import *
 import numpy as np
 from typing import List, Tuple, Optional
 
-def get_single_tangent_point(circle_center, circle_radius, external_point, side='left'):
-    """Calculate tangent point on circle from external point."""
+def get_tangent_by_point(circle_center, circle_radius, external_point) -> Tuple[List[float], List[float]]:
+    """Calculate tangent points on circle from external point.
+    Returns both tangent points and the external point as pairs forming two tangent lines.
+    """
     O = np.array(circle_center, dtype=float)
     P = np.array(external_point, dtype=float)
     OP = P[:2] - O[:2]
     d = np.linalg.norm(OP)
-
+    
     if d <= circle_radius:
         return None
-
+    
+    # Calculate angle between OP and tangent
     theta = np.arccos(circle_radius / d)
     phi = np.arctan2(OP[1], OP[0])
+    
+    # Calculate both tangent points
+    angle1 = phi + theta
+    angle2 = phi - theta
+    
+    T1_xy = O[:2] + circle_radius * np.array([np.cos(angle1), np.sin(angle1)])
+    T2_xy = O[:2] + circle_radius * np.array([np.cos(angle2), np.sin(angle2)])
+    
+    T1 = [T1_xy[0], T1_xy[1], O[2] if len(O) > 2 else 0]
+    T2 = [T2_xy[0], T2_xy[1], O[2] if len(O) > 2 else 0]
+    P_3d = [P[0], P[1], O[2] if len(O) > 2 else 0]
+    
+    return [T1, P_3d], [T2, P_3d]
 
-    angle = phi + theta if side == 'left' else phi - theta
-    T_xy = O[:2] + circle_radius * np.array([np.cos(angle), np.sin(angle)])
-    T = np.array([T_xy[0], T_xy[1], O[2]])
-    return T
+def get_tangent_by_angle_between_tangents(circle_center, circle_radius, angle) -> Tuple[List[float], List[float]]:
+    """Calculate tangent points on circle given angle between tangents.
+    Angle is in radians. Returns two pairs of points forming the tangent lines.
+    """
+    O = np.array(circle_center, dtype=float)
+    
+    # Calculate distance to external point using angle
+    # From the formula: sin(angle/2) = radius/distance
+    distance = circle_radius / np.sin(angle/2)
+    
+    # Place external point to the right of circle center
+    P = [O[0] + distance, O[1], O[2] if len(O) > 2 else 0]
+    
+    # Use get_tangent_by_point to find the tangent points
+    return get_tangent_by_point(circle_center, circle_radius, P)
+
+def get_tangent_by_angle_with_radius(circle_center, circle_radius, angle) -> Tuple[List[float], List[float]]:
+    """Calculates tangent if the angle between the tangent and line joining the center of the circle to the point of tangency is given.
+    """
+    return get_tangent_by_angle_between_tangents(circle_center, circle_radius, angle*2)[0]
+
+def get_tangent_by_distance_from_center(circle_center, circle_radius, distance_from_center) -> Tuple[List[float], List[float]]:
+    """Calculate tangent lines from a originating from a point given its distance from the center.
+    
+    Args:
+        circle_center: [x, y, z] coordinates of circle center
+        circle_radius: radius of circle
+        distance_from_center: distance from circle center to point where tangent originates
+    
+    Returns:
+        Tuple of two points representing the tangent points on the circle
+    """
+    if distance_from_center <= circle_radius:
+        return None
+    
+    # Calculate angle between radius and tangent using trigonometry
+    theta = np.arccos(circle_radius / distance_from_center)
+    
+    # Place point at specified distance along positive x-axis
+    P = [circle_center[0] + distance_from_center, circle_center[1], circle_center[2] if len(circle_center) > 2 else 0]
+    
+    # Use get_tangent_by_point to find tangent points
+    return get_tangent_by_point(circle_center, circle_radius, P)
+
+def get_tangent_by_length_of_tangent(circle_center, circle_radius, length_of_tangent) -> Tuple[List[float], List[float]]:
+    """Calculate tangent points given length of tangent.
+    
+    Args:
+        circle_center: [x, y, z] coordinates of circle center
+        circle_radius: radius of circle
+        length_of_tangent: length of the tangent line from external point to circle
+    
+    Returns:
+        Tuple of two points representing the tangent points on the circle
+    """
+    # Using Pythagorean theorem: tangent^2 = distance^2 - radius^2
+    # Solve for distance from center to external point
+    distance_from_center = np.sqrt(length_of_tangent**2 + circle_radius**2)
+    
+    # Use get_tangent_by_distance_from_center to find tangent points
+    return get_tangent_by_distance_from_center(circle_center, circle_radius, distance_from_center)
 
 def get_chord_from_center_distance(circle_center: List[float], circle_radius: float, distance_from_center: float) -> Tuple[List[float], List[float]]:
     """Calculate endpoints of a chord given its distance from center."""

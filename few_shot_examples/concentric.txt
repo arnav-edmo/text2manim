@@ -18,14 +18,14 @@
    - Points in WHITE or YELLOW for visibility
 
 # How to access Chord Function:
-- Function: get_chord_points(circle_center, circle_radius, distance_from_center)
+- Function: get_chord_from_center_distance(circle_center, circle_radius, distance_from_center)
 - Parameters:
   * circle_center: List[float] - Center coordinates [x, y, z]
   * circle_radius: float - Radius of the circle
   * distance_from_center: float - Distance of chord from circle center
 - Returns: Tuple of two points [x, y, z] representing chord endpoints
 - Note: Returns None if distance_from_center ≥ circle_radius
-- Example: get_chord_points([0, 0, 0], 3.5, 1.4)
+- Example: get_chord_from_center_distance([0, 0, 0], 3.5, 1.4)
 
 # Scaling Note:
 - All figures must fit within 12x7 rectangle
@@ -66,7 +66,7 @@ JSON:
       "radius": 1.4
     },
     "L1": {
-      "endpoints": "get_chord_points([0, 0, 0], 3.5, 1.4)"
+      "endpoints": "get_chord_from_center_distance([0, 0, 0], 3.5, 1.4)"
     }
   }
 }
@@ -103,7 +103,7 @@ JSON:
       "radius": 2.1
     },
     "L1": {
-      "endpoints": "get_chord_points([0, 0, 0], 3.5, 2.1)"
+      "endpoints": "get_chord_from_center_distance([0, 0, 0], 3.5, 2.1)"
     }
   }
 }

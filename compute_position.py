@@ -23,11 +23,20 @@ def parse_array_literal(array_str: str) -> List[float]:
         return None
 
 def evaluate_function_call(value: str) -> Any:
-    """Evaluate a function call string."""
+    """Evaluate a function call string with array indexing."""
     try:
+        # Handle array indexing
+        indices = []
+        base_call = value
+        while base_call.endswith(']'):
+            idx_start = base_call.rindex('[')
+            idx = int(base_call[idx_start + 1:-1])
+            indices.insert(0, idx)
+            base_call = base_call[:idx_start]
+
         # Extract function name and parameters
-        func_name = value[:value.find("(")]
-        params_str = value[value.find("(")+1:value.rfind(")")]
+        func_name = base_call[:base_call.find("(")]
+        params_str = base_call[base_call.find("(")+1:base_call.rfind(")")]
         
         # Parse parameters
         params = []
@@ -92,6 +101,12 @@ def evaluate_function_call(value: str) -> Any:
         elif isinstance(result, tuple):
             result = [r.tolist() if isinstance(r, np.ndarray) else r for r in result]
         
+        # Apply array indexing
+        for idx in indices:
+            result = result[idx]
+            if isinstance(result, np.ndarray):
+                result = result.tolist()
+        
         return result
     except Exception as e:
         print(f"Error evaluating function {value}: {str(e)}")
@@ -110,7 +125,6 @@ def evaluate_value(value: Any) -> Any:
         
     # Then try to evaluate as function call
     if any(fname in value for fname in [
-        "get_single_tangent_point",
         "get_square_vertices",
         "get_rectangle_vertices",
         "get_equilateral_triangle_vertices",
@@ -120,6 +134,11 @@ def evaluate_value(value: Any) -> Any:
         "get_common_chord",
         "get_chord_from_center_distance",
         "get_chord_from_length",
+        "get_tangent_by_point",
+        "get_tangent_by_angle_between_tangents",
+        "get_tangent_by_angle_with_radius",
+        "get_tangent_by_distance_from_center",
+        "get_tangent_by_length_of_tangent",
     ]):
         result = evaluate_function_call(value)
         if result is not None:
@@ -133,15 +152,20 @@ def evaluate_function_calls(json_schema: Dict[str, Any]) -> Dict[str, Any]:
     evaluated_positions = {}
     
     for entity_id, position_data in positions.items():
-        evaluated_position = {}
-        for key, value in position_data.items():
-            if isinstance(value, list):
-                # Handle arrays of values
-                evaluated_position[key] = [evaluate_value(item) for item in value]
-            else:
-                # Handle single values
-                evaluated_position[key] = evaluate_value(value)
-        evaluated_positions[entity_id] = evaluated_position
+        if isinstance(position_data, dict):
+            # Handle dictionary case (original behavior)
+            evaluated_position = {}
+            for key, value in position_data.items():
+                if isinstance(value, list):
+                    # Handle arrays of values
+                    evaluated_position[key] = [evaluate_value(item) for item in value]
+                else:
+                    # Handle single values
+                    evaluated_position[key] = evaluate_value(value)
+            evaluated_positions[entity_id] = evaluated_position
+        else:
+            # Handle direct value case (string, list, etc.)
+            evaluated_positions[entity_id] = evaluate_value(position_data)
     
     json_schema["positions"] = evaluated_positions
     return json_schema

@@ -97,30 +97,38 @@ def generate_json_schema(description: str, model_name: str = "llama-3.1-8b-insta
     NEVER put geometric properties (radius, side_length, etc.) only in entities - they MUST be in positions section for manim code generation.
 
     AVAILABLE GEOMETRIC FUNCTIONS:
-    1. get_single_tangent_point(circle_center, circle_radius, external_point, side)
-    2. get_square_vertices(center, side_length, orientation)
-    3. get_rectangle_vertices(center, length, width, orientation)
-    4. get_equilateral_triangle_vertices(center, side_length, orientation)
-    5. get_isosceles_triangle_vertices(center, equal_sides, base, orientation)
-    6. get_right_triangle_vertices(center, base, height, orientation)
-    7. get_inscribed_circle(vertices)
-    8. get_circumscribed_circle(vertices)
-    9. get_common_chord(circle1_center, circle1_radius, circle2_center, circle2_radius)
-    10. get_chord_from_center_distance(circle_center, circle_radius, distance_from_center)
-    11. get_chord_from_length(circle_center, circle_radius, chord_length)
+    1. get_square_vertices(center, side_length, orientation)
+    2. get_rectangle_vertices(center, length, width, orientation)
+    3. get_equilateral_triangle_vertices(center, side_length, orientation)
+    4. get_isosceles_triangle_vertices(center, equal_sides, base, orientation)
+    5. get_right_triangle_vertices(center, base, height, orientation)
+    6. get_inscribed_circle(vertices)
+    7. get_circumscribed_circle(vertices)
+    8. get_common_chord(circle1_center, circle1_radius, circle2_center, circle2_radius)
+    9. get_chord_from_center_distance(circle_center, circle_radius, distance_from_center)
+    10. get_chord_from_length(circle_center, circle_radius, chord_length)
+    11. get_tangent_by_point(circle_center, circle_radius, external_point)
+    12. get_tangent_by_angle_between_tangents(circle_center, circle_radius, angle)
+    13. get_tangent_by_angle_with_radius(circle_center, circle_radius, angle)
+    14. get_tangent_by_distance_from_center(circle_center, circle_radius, distance_from_center)
+    15. get_tangent_by_length_of_tangent(circle_center, circle_radius, length_of_tangent)
 
     IMPORTANT: The number of positional arguments for each function is as follows:
-    1. get_single_tangent_point: 4
-    2. get_square_vertices: 3
-    3. get_rectangle_vertices: 4
-    4. get_equilateral_triangle_vertices: 3
-    5. get_isosceles_triangle_vertices: 4
-    6. get_right_triangle_vertices: 4
-    7. get_inscribed_circle: 1
-    8. get_circumscribed_circle: 1
-    9. get_common_chord: 4
-    10. get_chord_from_center_distance: 3
-    11. get_chord_from_length: 3
+    1. get_square_vertices: 3
+    2. get_rectangle_vertices: 4
+    3. get_equilateral_triangle_vertices: 3
+    4. get_isosceles_triangle_vertices: 4
+    5. get_right_triangle_vertices: 4
+    6. get_inscribed_circle: 1
+    7. get_circumscribed_circle: 1
+    8. get_common_chord: 4
+    9. get_chord_from_center_distance: 3
+    10. get_chord_from_length: 3
+    11. get_tangent_by_point: 3
+    12. get_tangent_by_angle_between_tangents: 3
+    13. get_tangent_by_angle_with_radius: 3
+    14. get_tangent_by_distance_from_center: 3
+    15. get_tangent_by_length_of_tangent: 3
 
     """ + few_shot_examples + """
 
